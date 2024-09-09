@@ -10,11 +10,9 @@ from fastapi import FastAPI, HTTPException
 from typing import Any, Dict, Tuple
 from pydantic import BaseModel
 from ultralytics import YOLO
-
-sys.path.insert(1, '/home/POLITIET/abr063/git/drone_sar/')
 from tiller_light import tiller_light
 
-model_object_detection = YOLO('/home/POLITIET/abr063/git/drone_sar/runs/detect/run3/train4/weights/best.pt')
+model_object_detection = YOLO('best.pt')
 
 app = FastAPI()
 executor = ThreadPoolExecutor(max_workers=1)
