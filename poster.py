@@ -31,7 +31,7 @@ def post_img(image, pred_conf_limit, tiles, overlap_percentage, frame_number):
     
     headers = {'content-type': 'application/json', 'Accept': 'text/plain'}
     payload = json.dumps({'image_base64': str_img, "pred_conf_limit": pred_conf_limit, "tiles": tiles, "overlap_percentage": overlap_percentage, "frame_number": frame_number})
-    response = requests.post('http://localhost:8000/b64', data=payload, headers=headers)
+    response = requests.post('http://localhost:999/b64', data=payload, headers=headers)
     content = response.json()
     detections = content['detections']
     confidence = content['confidence']
@@ -73,7 +73,7 @@ def post_image(video_path, pred_conf_limit, tiles, overlap_percentage):
             print(f"Error sending frame {frame_count}: {e}")
         times.append(time.time() - init_time)
 
-        #passing the whole image
+        """
         _fig, _ax = plt.subplots(1)
         _ax.imshow(np.array(_frame))
         for elem in detections:
@@ -84,6 +84,7 @@ def post_image(video_path, pred_conf_limit, tiles, overlap_percentage):
         _fig.savefig(f'temp_videofile/non_nms_video/{frame_count}.png')
 
         plt.close()
+        """
 
         # Increment frame count
         frame_count += 1
@@ -99,26 +100,9 @@ if __name__ == '__main__':
     pred_conf_limit = 0.7
     overlap_percentage = 0.2
     tiles = (3,2)
-    video_path = '../skookumCreek_nobox.mp4'
-    gpu_times = open('timings/gpu_times.txt').read().splitlines() 
-    gpu_times = []
-    with open('timings/gpu_times.txt', 'r') as fp:
-        for line in fp:
-            gpu_times.append(float(line))
+    video_path = 'carnation_enterprise_ir.mp4'
 
     bool_res, times = post_image(video_path, pred_conf_limit, tiles, overlap_percentage)
-
-    fig, ax = plt.subplots(2,1)
-    plt.title('detection times for GPU (3090) and CPU, 3x2 tiles')
-    ax[0].plot(np.arange(0, len(gpu_times)), gpu_times, label='gpu timing')
-    ax[1].plot(np.arange(0, len(times)), times, label='cpu timing')
-    ax[0].set_ylabel('time [s]')
-    ax[1].set_ylabel('time [s]')
-
-    plt.xlabel('frame number')
-    plt.legend()
-    plt.savefig('timings/cpu_gpu_timed.png')
-
 
 
     """
